@@ -1,0 +1,51 @@
+group 'com.lunivore'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    ext.junitJupiterVersion  = '5.0.0-M3'
+    ext.mockitoVersion = "1.10.19"
+    ext.hamcrestVersion = "1.3"
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M3'
+    }
+}
+
+apply plugin: 'kotlin'
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
+sourceSets {
+    exampleApp {
+        kotlin {
+            srcDir file('src/exampleApp/kotlin')
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    exampleAppCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12"
+
+    testCompile sourceSets.exampleApp.output
+    testCompile("org.mockito:mockito-all:${mockitoVersion}")
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile("org.hamcrest:hamcrest-all:${hamcrestVersion}")
+}
