@@ -18,12 +18,6 @@ buildscript {
 
 apply plugin: 'kotlin'
 
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
-}
-
 sourceSets {
     exampleApp {
         kotlin {
@@ -41,7 +35,6 @@ dependencies {
     exampleAppCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.12"
 
     testCompile sourceSets.exampleApp.output
     testCompile("org.mockito:mockito-all:${mockitoVersion}")

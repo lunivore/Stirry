@@ -4,16 +4,12 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.layout.VBox
+import javafx.scene.control.Button
+import javafx.scene.control.TextField
+import javafx.scene.control.TextInputControl
 import javafx.stage.Stage
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.async
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
-import java.util.function.Predicate
-import java.util.stream.Collectors.toList
-import javax.swing.tree.TreeNode
-import kotlin.concurrent.thread
 
 
 class Stirry {
@@ -53,24 +49,44 @@ class Stirry {
             val found : Node? = findFirst(
                     parent.childrenUnmodifiable,
                     predicate)
+            if (found == null) { throw Exception("Node not found") }
             return found as? T
         }
 
         private fun findFirst(children: List<Node>, predicate: (Node) -> Boolean): Node? {
             var found : Node? = null
             for (child in children) {
-                println("Child is $child")
 
                 if (predicate(child)) { return child }
 
                 if (found == null && (child is Parent)) {
-                    println("Child is parent")
                     found = findFirst(child.childrenUnmodifiable, predicate)
                 }
-
                 if (found != null) return found
             }
             return found
+        }
+
+        fun buttonClick(predicate : (Button) -> Boolean) {
+            var button = find<Button>({ it is Button && predicate(it) })
+            if (button == null) { throw IllegalStateException("The button is missing or not available") }
+
+            val queue = ArrayBlockingQueue<Boolean>(1)
+            button.onAction.also { queue.put(true) }
+            button?.fire()
+            waitForPlatform()
+            queue.poll(1L, TimeUnit.SECONDS)
+        }
+
+        fun  setText(predicate: (TextInputControl) -> Boolean, desiredText: String) {
+            var textField = find<TextField>({it is TextField && predicate(it)})
+            if (textField == null) { throw IllegalStateException("The textField is missing or not available") }
+
+            val queue = ArrayBlockingQueue<Boolean>(1)
+            textField.onAction.also { queue.put(true)}
+            textField?.text = desiredText
+            waitForPlatform()
+            queue.poll(1L, TimeUnit.SECONDS)
         }
     }
 }

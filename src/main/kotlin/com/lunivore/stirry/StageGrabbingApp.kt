@@ -1,11 +1,9 @@
 package com.lunivore.stirry
 
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
-import kotlinx.coroutines.experimental.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 
