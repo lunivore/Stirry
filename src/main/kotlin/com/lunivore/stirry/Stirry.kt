@@ -2,6 +2,10 @@ package com.lunivore.stirry
 
 import javafx.application.Application
 import javafx.application.Platform
+import javafx.beans.value.ChangeListener
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
+import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
@@ -72,10 +76,12 @@ class Stirry {
             if (button == null) { throw IllegalStateException("The button is missing or not available") }
 
             val queue = ArrayBlockingQueue<Boolean>(1)
-            button.onAction.also { queue.put(true) }
+            var handler : EventHandler<ActionEvent> = EventHandler { queue.put(true)}
+            button.addEventHandler(ActionEvent.ACTION, handler)
             button?.fire()
             waitForPlatform()
             queue.poll(1L, TimeUnit.SECONDS)
+            button.removeEventHandler(ActionEvent.ACTION, handler)
         }
 
         fun  setText(predicate: (TextInputControl) -> Boolean, desiredText: String) {
@@ -83,10 +89,12 @@ class Stirry {
             if (textField == null) { throw IllegalStateException("The textField is missing or not available") }
 
             val queue = ArrayBlockingQueue<Boolean>(1)
-            textField.onAction.also { queue.put(true)}
-            textField?.text = desiredText
+            var listener : ChangeListener<String> = ChangeListener {s, t, u -> queue.put(true)}
+            textField.textProperty().addListener(listener)
+            Platform.runLater({ textField.text = desiredText })
             waitForPlatform()
             queue.poll(1L, TimeUnit.SECONDS)
+            textField.textProperty().removeListener(listener)
         }
     }
 }

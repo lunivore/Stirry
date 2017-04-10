@@ -51,7 +51,7 @@ class StirryTest {
         // Given a text box that's going to set a flag when text is entered
         var textSet : Boolean = false
         val textField = find<TextField>({it is TextField})
-        textField?.onAction.also { textSet = true }
+        textField?.textProperty()?.addListener({it -> textSet = true })
 
         // When we ask Stirry to set the text for us
         Stirry.setText({it is TextField}, "Hello!")
