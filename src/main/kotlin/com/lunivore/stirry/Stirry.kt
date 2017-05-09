@@ -11,6 +11,8 @@ import javafx.scene.Parent
 import javafx.scene.control.Button
 import javafx.scene.control.TextField
 import javafx.scene.control.TextInputControl
+import javafx.scene.input.Clipboard
+import javafx.scene.input.DataFormat
 import javafx.stage.Stage
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
@@ -95,6 +97,14 @@ class Stirry {
             waitForPlatform()
             queue.poll(1L, TimeUnit.SECONDS)
             textField.textProperty().removeListener(listener)
+        }
+
+        fun  getClipboard(format: DataFormat): Any? {
+            waitForPlatform()
+            var result : Any? = null
+            Platform.runLater({ result = Clipboard.getSystemClipboard().getContent(format)} )
+            waitForPlatform()
+            return result
         }
     }
 }
