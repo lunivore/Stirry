@@ -3,9 +3,9 @@ package com.lunivore.stirry
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.beans.value.ChangeListener
+import javafx.embed.swing.JFXPanel
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
-import javafx.event.EventType
 import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.control.Button
@@ -25,8 +25,11 @@ class Stirry {
         private var stage: Stage? = null
 
         fun initialize() {
+            JFXPanel() // Initialize platform
             if (stage == null) {
-                Thread({ Application.launch(StageGrabbingApp::class.java) }).start()
+                Platform.runLater { StageGrabbingApp().start(Stage())}
+                Platform.setImplicitExit(false)
+                waitForPlatform()
             }
             stage = StageGrabbingApp.capturedStage()
         }
@@ -34,7 +37,7 @@ class Stirry {
         private fun waitForPlatform() {
             val queue = ArrayBlockingQueue<Boolean>(1)
             Platform.runLater({ queue.put(true) })
-            queue.poll(10L, TimeUnit.SECONDS)
+            queue.poll(1L, TimeUnit.SECONDS)
         }
 
         fun rootNode(): Node? {
@@ -43,7 +46,7 @@ class Stirry {
 
 
         fun startApp(app: Application) {
-            if (stage == null) throw IllegalStateException("Stirry must be initialized!")
+            if (stage == null) { initialize() }
             Platform.runLater({ app.start(stage) })
             waitForPlatform()
         }
@@ -105,6 +108,11 @@ class Stirry {
             Platform.runLater({ result = Clipboard.getSystemClipboard().getContent(format)} )
             waitForPlatform()
             return result
+        }
+
+        fun stop() {
+            Platform.runLater{ stage?.close() }
+            waitForPlatform()
         }
     }
 }

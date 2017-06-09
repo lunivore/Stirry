@@ -30,7 +30,7 @@ class StirryTest {
 
     @Test
     fun shouldBeAbleToFindAComponentWithPredicate() {
-        val button = find<Button>({b -> b is Button && b.text == "One"})
+        val button = find<Button>({ b -> b is Button && b.text == "One" })
         assertTrue(button?.text == "One")
     }
 
@@ -38,12 +38,12 @@ class StirryTest {
     fun shouldBeAbleToClickAButton() {
 
         // Given a button that's going to set a flag when it's clicked
-        var clicked : Boolean = false
-        val button = find<Button>({it is Button && it.text == "Two"})
+        var clicked: Boolean = false
+        val button = find<Button>({ it is Button && it.text == "Two" })
         button?.onAction.also { clicked = true }
 
         // When we ask Stirry to click the button for us
-        Stirry.buttonClick({it.text == "Two"})
+        Stirry.buttonClick({ it.text == "Two" })
 
         // Then it should wait for the button to be clicked
         assertTrue(clicked)
@@ -52,12 +52,12 @@ class StirryTest {
     @Test
     fun shouldBeAbleToEnterTextIntoATextBox() {
         // Given a text box that's going to set a flag when text is entered
-        var textSet : Boolean = false
-        val textField = find<TextField>({it is TextField})
-        textField?.textProperty()?.addListener({it -> textSet = true })
+        var textSet: Boolean = false
+        val textField = find<TextField>({ it is TextField })
+        textField?.textProperty()?.addListener({ it -> textSet = true })
 
         // When we ask Stirry to set the text for us
-        Stirry.setText({it is TextField}, "Hello!")
+        Stirry.setText({ it is TextField }, "Hello!")
 
         // Then it should wait for the text to be set
         assertTrue(textSet)
@@ -70,12 +70,24 @@ class StirryTest {
         // and text has been put into the clipboard
         val content = mutableMapOf<DataFormat, Any>()
         content[DataFormat.PLAIN_TEXT] = "Clipped!"
-        Platform.runLater { Clipboard.getSystemClipboard().setContent(content)}
+        Platform.runLater { Clipboard.getSystemClipboard().setContent(content) }
 
         // When we ask Stirry to get the text
         val result = Stirry.getClipboard(DataFormat.PLAIN_TEXT)
 
         // Then it should be able to recover it for us
         assertEquals("Clipped!", result)
+    }
+
+    @Test
+    fun shouldBeAbleToStopStirryAndStartAgain() {
+        // Given the platform is initialized (which it is)
+
+        // When we stop Stirry
+        Stirry.stop()
+
+        // Then we should be able to start it again
+        Stirry.initialize()
+        Stirry.startApp(ExampleApp())
     }
 }

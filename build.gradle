@@ -1,5 +1,5 @@
 group 'com.lunivore'
-version '0.0.1-20170509'
+version '0.0.2-20170609'
 
 buildscript {
     ext.kotlinVersion = '1.1.1'
