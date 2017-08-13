@@ -8,6 +8,10 @@ import javafx.scene.layout.GridPane
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.control.Alert
+import javafx.scene.control.Button
+
 
 class StirryTest : NodeTest() {
 
@@ -42,5 +46,25 @@ class StirryTest : NodeTest() {
 
         // Then it should be able to recover it for us
         assertEquals("Clipped!", result)
+    }
+
+    @Test
+    fun `should be able to find modal dialog`() {
+        // Given that the app's open (which it is)
+        // and a modal dialog is open too
+        Stirry.runOnPlatform {
+            val alert = Alert(AlertType.INFORMATION)
+            alert.title = "Dialog"
+            alert.headerText = null
+            alert.contentText = "Hello!"
+            alert.showAndWait()
+        }
+
+        // When we find the modal dialog
+        val dialog = Stirry.findModalDialog()
+
+        // Then we should be able to close it
+        dialog.stirFind<Button> { it is Button && it.text == "OK" }?.stirClick()
+
     }
 }

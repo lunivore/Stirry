@@ -14,7 +14,7 @@ fun Button.stirClick() {
     val queue = ArrayBlockingQueue<Boolean>(1)
     val handler : EventHandler<ActionEvent> = EventHandler { queue.put(true)}
     addEventHandler(ActionEvent.ACTION, handler)
-    fire()
+    Stirry.runOnPlatform { fire() }
     Stirry.waitForPlatform()
     queue.poll(1L, TimeUnit.SECONDS)
     removeEventHandler(ActionEvent.ACTION, handler)

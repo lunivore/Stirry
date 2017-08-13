@@ -5,8 +5,10 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
+import javafx.scene.control.Dialog
 import javafx.scene.input.Clipboard
 import javafx.scene.input.DataFormat
+import javafx.stage.Modality
 import javafx.stage.Stage
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.ArrayBlockingQueue
@@ -77,6 +79,17 @@ class Stirry {
             waitForPlatform()
             runOnPlatform {  result = Clipboard.getSystemClipboard().getContent(format)}
             return result
+        }
+
+        fun findModalDialog(): Parent {
+            val modalStages = StageHelper.getStages().filtered {
+                it.modality == Modality.APPLICATION_MODAL || it.modality == Modality.WINDOW_MODAL
+            }
+
+            if (modalStages.count() < 1) { throw IllegalStateException("Could not find modal dialog") }
+            if (modalStages.count() > 1) { throw IllegalStateException("More than one modal dialog is present") }
+
+            return modalStages[0].scene.root
         }
     }
 }
