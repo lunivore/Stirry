@@ -1,11 +1,12 @@
 group 'com.lunivore'
-version '0.0.2-20170609'
+version '0.1.0-20170813'
 
 buildscript {
     ext.kotlinVersion = '1.1.1'
     ext.junitJupiterVersion  = '5.0.0-M4'
     ext.mockitoVersion = "1.10.19"
     ext.hamcrestVersion = "1.3"
+    ext.log4jVersion = '2.8.2'
 
     repositories {
         mavenCentral()
@@ -35,6 +36,8 @@ dependencies {
     exampleAppCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    compile "org.apache.logging.log4j:log4j-api:$log4jVersion"
+    compile "org.apache.logging.log4j:log4j-core:$log4jVersion"
 
     testCompile sourceSets.exampleApp.output
     testCompile("org.mockito:mockito-all:${mockitoVersion}")
