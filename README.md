@@ -1,11 +1,11 @@
 # Stirry
 A very lightweight JavaFX automation tool.
 
-Big thanks to [Renato Athaydes and the Automaton team](https://github.com/renatoathaydes/Automaton) for hints on how to grab an FX App.
-
 Current features:
 
-- Grabs the root node of your app
-- Lets you search for Nodes using a predicate.
+- Find the root node of your app, or modal dialogs
+- Find any other node using predicates
+- Wait for nodes to be in a particular state, returning any arbitrary result you like
+- Wait for text property changes (faster)
 
-Examples of how to use it are [here](src/test/kotlin/com/lunivore/stirry/StirryTest.kt).
+Examples of how to use it are [here](src/test/kotlin/com/lunivore/stirry/).
