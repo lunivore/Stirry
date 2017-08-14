@@ -4,14 +4,13 @@ import javafx.scene.control.Button
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
-class ParentTest() : NodeTest() {
+class ParentTest() : AbstractExampleApplicationTest() {
 
     @Test
     fun `should be able to find children using predicates`() {
-        var button = Stirry.rootNode().stirFind<Button>({
+        var result = Stirry.findRoot().find<Button>({
             it is Button && it.text == "One" })
 
-        assertTrue(button?.text == "One")
+        assertTrue(result?.value.text == "One")
     }
-
 }

@@ -2,31 +2,18 @@ package com.lunivore.stirry
 
 import javafx.scene.Node
 import javafx.scene.Parent
-import org.apache.logging.log4j.LogManager
+import java.util.*
 
-fun <T : Parent> Parent.stirFind(predicate: (Node) -> Boolean): T? {
-    val logger = LogManager.getLogger()
+inline fun <reified T : Node> Parent.find(predicate: (T) -> Boolean): Result<T> {
 
-    logger.debug("Finding a node...")
-
-    val found : Node = findFirst (
-            this.childrenUnmodifiable,
-            predicate) ?: throw Exception("Node not found")
-
-    logger.debug("...node found of type ${found::class.java}")
-    return found as? T
-}
-
-private fun findFirst(children: List<Node>, predicate: (Node) -> Boolean): Node? {
-    var found : Node? = null
-    for (child in children) {
-
-        if (predicate(child)) { return child }
-
-        if (found == null && (child is Parent)) {
-            found = findFirst(child.childrenUnmodifiable, predicate)
+    val stack = Stack<Node>()
+    stack.push(this)
+    while(!stack.empty()) {
+        val candidate = stack.pop()
+        if (candidate is T && predicate(candidate)) {
+            return Result<T>(candidate, "")
         }
-        if (found != null) return found
+        if (candidate is Parent) { candidate.childrenUnmodifiable.forEach {stack.push(it)} }
     }
-    return found
+    return Result(null, "Failed to find node of type ${T::class.java}")
 }

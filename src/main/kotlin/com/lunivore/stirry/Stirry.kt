@@ -4,8 +4,8 @@ import com.sun.javafx.stage.StageHelper
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.embed.swing.JFXPanel
+import javafx.scene.Node
 import javafx.scene.Parent
-import javafx.scene.control.Dialog
 import javafx.scene.input.Clipboard
 import javafx.scene.input.DataFormat
 import javafx.stage.Modality
@@ -19,7 +19,7 @@ class Stirry {
 
     companion object {
         val logger = LogManager.getLogger()
-        var stage : Stage? = null
+        var stage: Stage? = null
 
         fun initialize() {
             logger.debug("Initializing platform...")
@@ -38,10 +38,10 @@ class Stirry {
             logger.debug("...platform idle")
         }
 
-        fun rootNode(): Parent {
+        fun findRoot(): Parent {
             val stagesWithRoots = StageHelper.getStages()
-                    .filter {it.scene != null}
-                    .filter {it.scene.root != null}
+                    .filter { it.scene != null }
+                    .filter { it.scene.root != null }
 
             if (stagesWithRoots.count() < 1) {
                 throw IllegalStateException("No root node was found")
@@ -60,7 +60,9 @@ class Stirry {
 
         fun launchApp(application: Application) {
             runOnPlatform {
-                if (stage == null) { stage = Stage() }
+                if (stage == null) {
+                    stage = Stage()
+                }
                 application.start(stage)
                 Platform.setImplicitExit(false)
             }
@@ -68,16 +70,17 @@ class Stirry {
 
         fun stop() {
             runOnPlatform {
-                val stageClosers : List<Runnable>
-                        = StageHelper.getStages().map { it -> Runnable {it.close()} }
-                stageClosers.forEach{ it.run() }
+                val stageClosers: List<Runnable>
+                        = StageHelper.getStages().map { it -> Runnable { it.close() } }
+                stageClosers.forEach { it.run() }
             }
+            waitForPlatform()
         }
 
-        fun  getClipboard(format: DataFormat): Any? {
-            var result : Any? = null
+        fun getClipboard(format: DataFormat): Any? {
+            var result: Any? = null
             waitForPlatform()
-            runOnPlatform {  result = Clipboard.getSystemClipboard().getContent(format)}
+            runOnPlatform { result = Clipboard.getSystemClipboard().getContent(format) }
             return result
         }
 
@@ -86,10 +89,22 @@ class Stirry {
                 it.modality == Modality.APPLICATION_MODAL || it.modality == Modality.WINDOW_MODAL
             }
 
-            if (modalStages.count() < 1) { throw IllegalStateException("Could not find modal dialog") }
-            if (modalStages.count() > 1) { throw IllegalStateException("More than one modal dialog is present") }
+            if (modalStages.count() < 1) {
+                throw IllegalStateException("Could not find modal dialog")
+            }
+            if (modalStages.count() > 1) {
+                throw IllegalStateException("More than one modal dialog is present")
+            }
 
             return modalStages[0].scene.root
+        }
+
+        inline fun <reified T : Node> findInRoot(predicate: (T) -> Boolean): Result<T> {
+            return findRoot().find<T>(predicate)
+        }
+
+        inline fun <reified T : Node> findInModalDialog(predicate: (T) -> Boolean): Result<T> {
+            return findModalDialog().find<T>(predicate)
         }
     }
 }
