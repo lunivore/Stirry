@@ -5,9 +5,9 @@ import javafx.application.Platform
 import javafx.scene.control.Alert
 import javafx.scene.control.Alert.AlertType
 import javafx.scene.control.Button
+import javafx.scene.control.TabPane
 import javafx.scene.input.Clipboard
 import javafx.scene.input.DataFormat
-import javafx.scene.layout.GridPane
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -16,7 +16,7 @@ class StirryTest : AbstractExampleApplicationTest() {
 
     @Test
     fun `should be able to grab an application node when there is only one`() {
-        assertNotNull(Stirry.findRoot() as GridPane, "")
+        assertNotNull(Stirry.findRoot() as TabPane, "")
     }
 
 

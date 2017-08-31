@@ -7,4 +7,5 @@ class Result<T>(private val nullableValue: T?, val message: String) {
             if (nullableValue == null) { throw IllegalStateException("Attempted to use value from failed result: $message") }
             return nullableValue
         }
+
 }
